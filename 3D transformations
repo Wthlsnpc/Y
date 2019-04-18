@@ -1,0 +1,422 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace lab10rev1._0
+{
+    public partial class Form1 : Form
+    {
+        double[,] v = new double[4, 4];
+        double[,] cv = new double[4, 4];
+        double[,] cv1 = new double[4, 4];
+        double[,] matr = new double[4, 4];
+        public Form1()
+        {
+            InitializeComponent();
+        }
+  
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            v[0, 0] = 0; v[0, 1] = 0; v[0, 2] = 50; v[0, 3] = 1;
+            v[1, 0] = 50; v[1, 1] = 0; v[1, 2] = -25; v[1, 3] = 1;
+            v[2, 0] = -50; v[2, 1] = 0; v[2, 2] = -25; v[2, 3] = 1;
+            v[3, 0] = 0; v[3, 1] = 50; v[3, 2] = 0; v[3, 3] = 1;
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 4; j++)
+                    cv[i, j] = v[i, j];
+            textBox1.Text = "15";
+            textBox2.Text = "500";
+            copy_v1();
+        }
+        private void Form1_Paint(object sender, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            Pen skyBluePen = new Pen(Brushes.DeepSkyBlue);
+            int cx = ClientSize.Width / 2;
+            int cy = ClientSize.Height / 2;
+            g.DrawLine(skyBluePen, cx, 0, cx, ClientSize.Height);
+            g.DrawLine(skyBluePen, 0, cy, ClientSize.Width, cy);
+            Pen v = new Pen(Brushes.DarkRed);
+            g.DrawLine(v, (int)(cx + cv1[0, 0]), (int)(cy - cv1[0, 1]),
+                                (int)(cx + cv1[1, 0]), (int)(cy - cv1[1, 1]));
+            g.DrawLine(v, (int)(cx + cv1[0, 0]), (int)(cy - cv1[0, 1]),
+                                (int)(cx + cv1[2, 0]), (int)(cy - cv1[2, 1]));
+            g.DrawLine(v, (int)(cx + cv1[0, 0]), (int)(cy - cv1[0, 1]),
+                                (int)(cx + cv1[3, 0]), (int)(cy - cv1[3, 1]));
+            g.DrawLine(v, (int)(cx + cv1[1, 0]), (int)(cy - cv1[1, 1]),
+                                (int)(cx + cv1[2, 0]), (int)(cy - cv1[2, 1]));
+            g.DrawLine(v, (int)(cx + cv1[1, 0]), (int)(cy - cv1[1, 1]),
+                                (int)(cx + cv1[3, 0]), (int)(cy - cv1[3, 1]));
+            g.DrawLine(v, (int)(cx + cv1[2, 0]), (int)(cy - cv1[2, 1]),
+                                (int)(cx + cv1[3, 0]), (int)(cy - cv1[3, 1]));
+        }
+        private void copy_v1()
+        {
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 4; j++)
+                    cv1[i, j] = cv[i, j];
+        }
+        private void matr_reset()
+        {
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 4; j++)
+                {
+                    if (i == j)
+                        matr[i, j] = 1;
+                    else
+                        matr[i, j] = 0;
+                }
+        }
+        private void multiply()
+        {
+            double[] b = new double[4];
+            for (int j = 0; j < 4; j++)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    b[i] = 0;
+                    for (int k = 0; k < 4; k++) b[i] = b[i] + cv[j, k] * matr[k, i];
+                }
+                for (int k = 0; k < 4; k++) cv[j, k] = b[k];
+            }
+        }
+
+        private void multiply1()
+        {
+            double[] b = new double[4];
+            for (int j = 0; j < 4; j++)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    b[i] = 0;
+                    for (int k = 0; k < 4; k++) b[i] = b[i] + cv1[j, k] * matr[k, i];
+                }
+                for (int k = 0; k < 4; k++) cv1[j, k] = b[k];
+            }
+        }
+
+        private void Normalyze()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    cv[j, 0] = cv[j, 0] / cv[j, 3];
+                    cv[j, 1] = cv[j, 1] / cv[j, 3];
+                    cv[j, 2] = cv[j, 2] / cv[j, 3];
+                    cv[j, 3] = 1;
+                }
+            }
+        }
+        private void Normalyze1()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    cv1[j, 0] = cv1[j, 0] / cv1[j, 3];
+                    cv1[j, 1] = cv1[j, 1] / cv1[j, 3];
+                    cv1[j, 2] = cv1[j, 2] / cv1[j, 3];
+                    cv1[j, 3] = 1;
+                }
+            }
+        }
+        //перемещения
+        private void my1()
+        {
+            matr_reset();
+            matr[3, 1] = 1;
+            multiply();
+            View();
+        }
+        private void my2()
+        {
+            matr_reset();
+            matr[3, 1] = -1;
+            multiply();
+            View();
+        }
+        private void mx1()
+        {
+            matr_reset();
+            matr[3, 0] = 1;
+            multiply();
+            View();
+        }
+        private void mx2()
+        {
+            matr_reset();
+            matr[3, 0] = -1;
+            multiply();
+            View();
+        }
+        private void mz1()
+        {
+            matr_reset();
+            matr[3, 2] = 1;
+            multiply();
+            View(); 
+        }
+        private void mz2()
+        {
+            matr_reset();
+            matr[3, 2] = -1;
+            multiply(); 
+            View();
+        }
+        private void button1_Click(object sender, EventArgs e)
+        { my1(); }
+        private void button3_Click(object sender, EventArgs e)
+        { my2(); }
+        private void button2_Click(object sender, EventArgs e)
+        { mx2(); }
+        private void button4_Click(object sender, EventArgs e)
+        { mx1(); }
+        private void button5_Click(object sender, EventArgs e)
+        { mz1(); }
+        private void button6_Click(object sender, EventArgs e)
+        { mz2(); }
+        //отражения
+        private void XYref()
+        {
+            matr_reset();
+            matr[2, 2] = -1;
+            multiply();
+            Normalyze();
+            View();
+        }
+        private void YZref()
+        {
+            matr_reset();
+            matr[1, 1] = -1;
+            multiply();
+            Normalyze();
+            View();
+        }
+        private void XZref()
+        {
+            matr_reset();
+            matr[0, 0] = -1;
+            multiply();
+            Normalyze();
+            View();
+        }
+        private void button7_Click(object sender, EventArgs e)
+        {
+            XYref();
+        }
+        private void button8_Click(object sender, EventArgs e)
+        {
+            XZref();
+        }
+        private void button9_Click(object sender, EventArgs e)
+        {
+            YZref();
+        }
+        //масштаб
+        private void sizeplus()
+         {
+            matr_reset();
+            if (radioButton4.Checked)
+                matr[3, 3] = 0.9;
+            if (radioButton5.Checked)
+                matr[0, 0] = 1.1;
+            if (radioButton6.Checked)
+                matr[1, 1] = 1.1;
+            if (radioButton7.Checked)
+                matr[2, 2] = 1.1;
+            multiply();
+            Normalyze();
+            View();
+        }
+        private void sizeminus()
+        {
+            matr_reset();
+            if (radioButton4.Checked)
+                matr[3, 3] = 1.1;
+            if (radioButton5.Checked)
+                matr[0, 0] = 0.9;
+            if (radioButton6.Checked)
+                matr[1, 1] = 0.9;
+            if (radioButton7.Checked)
+                matr[2, 2] = 0.9;
+            multiply();
+            Normalyze();
+            View();
+        }
+        //проекции
+        private void View()
+        {
+            copy_v1();
+            if (radioButton1.Checked)
+                front();
+            if (radioButton2.Checked)
+                Point();
+            if (radioButton3.Checked)
+                Kosoyg();
+            if(radioButton8.Checked)
+                cav();
+            multiply1();
+            Normalyze1();
+            Invalidate();
+        }
+        private void front()
+        {
+            matr_reset();
+            matr[2, 2] = 0;
+        }
+        private void cav()
+        {
+            matr_reset();
+            matr[2, 2] = 0;
+            double l = 1, fi = 45 / 180 * Math.PI;
+            matr[2, 0] = l * Math.Cos(fi);
+            matr[2, 1] = l * Math.Sin(fi);
+        }
+        private void Point()
+        {
+            matr_reset();
+            matr[2, 2] = 0;
+            matr[2, 3] = 1.0 / (Convert.ToDouble(textBox1.Text));
+        }
+        private void Kosoyg()
+        {
+            matr_reset();
+            matr[2, 2] = 0;
+            double l = 0.5, fi = 30 * Math.PI / 180;
+            matr[2, 0] = l * Math.Cos(fi);
+            matr[2, 1] = l * Math.Sin(fi);
+        }
+        private void reset()
+        {
+            for (int i = 0; i < 4; ++i)
+                for (int j = 0; j < 4; ++j)
+                    cv[i, j] = v[i, j];
+            Invalidate();
+        }
+        private void button10_Click(object sender, EventArgs e)
+        {
+            View();
+        }
+        private void button11_Click(object sender, EventArgs e)
+        {
+            reset();
+        }
+        private void rotateX()
+        {
+            matr_reset();
+            double fi = 0;
+            if (textBox1.Text != "")
+                fi = Convert.ToDouble(textBox1.Text) / 180 * Math.PI;
+            matr[1, 1] = Math.Cos(fi);
+            matr[1, 2] = Math.Sin(fi);
+            matr[2, 1] = -Math.Sin(fi);
+            matr[2, 2] = Math.Cos(fi);
+            multiply();
+            Normalyze();
+            View();
+        }
+        private void rotateY()
+        {
+            matr_reset();
+            double fi = 0;
+            if (textBox1.Text != "")
+                fi = Convert.ToDouble(textBox1.Text) / 180 * Math.PI;
+            matr[0, 0] = Math.Cos(fi);
+            matr[0, 2] = -Math.Sin(fi);
+            matr[2, 0] = Math.Sin(fi);
+            matr[2, 2] = Math.Cos(fi);
+            multiply();
+            Normalyze();
+            View();
+        }
+        private void rotateZ()
+        {
+            matr_reset();
+            double fi = 0;
+            if (textBox1.Text != "")
+                fi = Convert.ToDouble(textBox1.Text) / 180 * Math.PI;
+            matr[0, 0] = Math.Cos(fi);
+            matr[0, 1] = Math.Sin(fi);
+            matr[1, 0] = -Math.Sin(fi);
+            matr[1, 1] = Math.Cos(fi);
+            multiply();
+            Normalyze();
+            View();
+        }
+        private void button12_Click(object sender, EventArgs e)
+        {
+            rotateX();
+        }
+        private void button13_Click(object sender, EventArgs e)
+        {
+            rotateY();
+        }
+        private void button14_Click(object sender, EventArgs e)
+        {
+            rotateZ();
+        }
+
+        private void button15_Click(object sender, EventArgs e)
+        {
+            sizeplus();
+        }
+
+        private void button16_Click(object sender, EventArgs e)
+        {
+            sizeminus();
+        }
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Space: reset(); break;
+                case Keys.W: my1(); break;
+                case Keys.S: my2(); break;
+                case Keys.A: mx2(); break;
+                case Keys.D: mx1(); break;
+                case Keys.Q: mz1(); break;
+                case Keys.E: mz2(); break;
+                case Keys.F: XYref(); break;
+                case Keys.G: YZref(); break;
+                case Keys.H: XZref(); break;
+                case Keys.X: rotateX(); break;
+                case Keys.Y: rotateY(); break;
+                case Keys.Z: rotateZ(); break;
+                case Keys.OemMinus: sizeminus(); break;
+                case Keys.Oemplus: sizeplus(); break;
+            }
+        }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            View();
+        }
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+            View();
+        }
+
+        private void radioButton3_CheckedChanged(object sender, EventArgs e)
+        {
+            View();
+        }
+
+        private void radioButton8_CheckedChanged(object sender, EventArgs e)
+        {
+            View();
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox1.Text != String.Empty) View();
+        }
+    }
+}
